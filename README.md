@@ -56,19 +56,31 @@ Optionally you may have these things around:
 Components
 ----------
 
-| Ref. | Part                        | Notes / Alternative parts  |
-| ---- | --------------------------- | -------------------------- |
-| D1   | `Diodes Inc. 1N5819HW1`     | `MBR0520LT1G` or any other SOD123 Schottky diode with If > 500mA and low Vf
-| L1   | `TDK VLS252012HBU-220M`     | `Murata LQH2HPZ220MJRL` / 22uH 2.5x2.0mm inductor
-| U1   | `Hexin  HX3001`             | `Chipown AP2000ATCER` / Current mode step up converter SOT23-6
-| C1   | `Samsung CL21A106KPFNNNF`   | 10uF 0805 X5R 10V MLC capacitor
-| C2   | `Samsung CL21B474KAFNNNE`   | 470nF 0805 X7R 25V MLC capacitor
-| R1   | `Panasonic ERJ-6ENF51R1V`   | 51 Ohm 0805 1% resistor
-| R2   | `Panasonic ERJ-3GEYJ105V`   | 1 MOhm 0603 5% resistor
-| LED1 | `Inolux IN-S126ASUW`        | Side view white LED If = 20mA 
-| LED2 | `Inolux IN-S126ASUW`        | Side view white LED If = 20mA
-| S1   | `C&K PTS645SL50SMTR92`      | Many surface mount tactile switches with a 6x6mm outline
-| BAT1 | `Keystone Electronics 3034` | `Linx Technologies BAT-HLD-001` or `MPD BK-912-TR` or `Q&J WJ-CR2032-1-W`
+| Ref.      | Part                        | Notes / Alternative parts  |
+| --------- | --------------------------- | -------------------------- |
+| Q1        | `Alpha&Omega Semi AO7401`   | `ON Semiconductor NTS2101P` / SC-70 P-Channel MOSFET (as reverse polarity protection)
+| L1        | `TDK VLS252012HBU-220M`     | `Murata LQH2HPZ220MJRL` / 22uH 2.5x2.0mm inductor
+| U1        | `QX2304L36T`                | Low power PFM Step up converter / SOT23-3
+| C1        | `Samsung CL21A106KPFNNNF`   | 10uF 0805 X5R 10V MLC capacitor
+| C2        | `Samsung CL21A106KPFNNNF`   | 10uF 0805 X5R 10V MLC capacitor
+| C3        | `Samsung CL05B105KQ5NQNC`   | 1uF 0402 X7R 6.3V MLC capacitor
+| C4        | `Samsung CL05B104KO5NNNC`   | 100nF 0402 X7R 16V MLC capacitor
+| R1206     | `Yaego SR1206FR-7T100RL`    | 100 Ohm 1% 1206 resistor
+| R0805     | `Yaego SR0805FR-7T100RL`    | 100 Ohm 1% 0805 resistor
+| R0603     | `Yaego SR0603FR-7T100RL`    | 100 Ohm 1% 0603 resistor
+| R0402     | `Yaego SR0402FR-7T100RL`    | 100 Ohm 1% 0402 resistor
+| R0201     | `Yaego RC0201FR-07100RL`    | 100 Ohm 1% 0201 resistor
+| R01005    | `Panasonic ERJ-XGNJ101Y`    | 100 Ohm 5% 01005 resistor
+| LED1206   | `QTB QBLP650-IB`            | Blue LED 1206 / InGaN
+| LED0805   | `QTB QBLP631-IB`            | Blue LED 0805 / InGaN
+| LED0603   | `QTB QBLP601-IB`            | Blue LED 0603 / InGaN
+| LED0402   | `QTB QBLP595-IB`            | Blue LED 0402 / InGaN
+| LED0201_1 | `LUMEX SML-LX0201USBC`      | Blue LED 0201 / InGaN
+| LED0201_2 | `LUMEX SML-LX0201USBC`      | Blue LED 0201 / InGaN
+| LED_PG    | `QTB QBLP631-R`             | Red LED 0805 / reversed battery indicator
+| LED_RP    | `QTB QBLP631-IG`            | Green LED 0805 / "power good" indicator
+| S1        | `C&K PTS645SL50SMTR92`      | Many surface mount tactile switches with a 6x6mm outline
+| BAT1      | `Keystone Electronics 3034` | `Linx Technologies BAT-HLD-001` or `MPD BK-912-TR` or `Q&J WJ-CR2032-1-W`
 
 
 I don't know anything about electronics, what can I learn?
