@@ -9,9 +9,19 @@
 #include "stm8s003.h"
 #include "systick.h"
 
+//--------------------------------------------------------------
+// type definitions and configuration
+typedef void (*setledmethod_t)( uint8_t );
+
+
 #define FLASH_DURATION 50
 #define GLITTER_DELAY_ON 30
 #define GLITTER_DELAY_OFF 70
+
+// settings for the auto-wakeup-unit:
+// (APR = 22; AWUTB = 15) ~= 14 seconds interval
+#define POWER_SAVE_AWU_APR 22
+#define POWER_SAVE_AWU_AWUTB 15
 
 //--------------------------------------------------------------
 // fn/method prototypes
@@ -19,10 +29,12 @@ void init_sysclock(void);
 void init_AWU(void);
 void init_low_power(void);
 void init_gpio(void);
+void flash_led(setledmethod_t ledMethod);
+void glitter_led(setledmethod_t ledOnMethod, setledmethod_t ledOffMethod);
 
-typedef void (*SetLedMethod)( uint8_t );
-
-// invert the set value as the LEDs are in a low side switch configuration
+//--------------------------------------------------------------
+// helper methods to set the LED outputs
+// inverts the set value as the LEDs are in a low side switch configuration
 void set_led_powergood(uint8_t value) { PA_ODR_bit.ODR3 = (value == 1) ? LOW : HIGH; }
 void set_led_1206(uint8_t value)      { PC_ODR_bit.ODR3 = (value == 1) ? LOW : HIGH; }
 void set_led_0805(uint8_t value)      { PC_ODR_bit.ODR4 = (value == 1) ? LOW : HIGH; }
@@ -31,19 +43,14 @@ void set_led_0402(uint8_t value)      { PC_ODR_bit.ODR6 = (value == 1) ? LOW : H
 void set_led_0201(uint8_t value)      { PC_ODR_bit.ODR7 = (value == 1) ? LOW : HIGH; }
 void set_led_01005(uint8_t value)     { PD_ODR_bit.ODR2 = (value == 1) ? LOW : HIGH; }
 
-void flash_led(SetLedMethod ledMethod)
-{
-  ledMethod(HIGH);
-  delayms(FLASH_DURATION);
-  ledMethod(LOW);
-}
-
-void glitter_led(SetLedMethod ledOn, SetLedMethod ledOff)
-{
-  ledOn(HIGH);
-  delayms(GLITTER_DELAY_ON);
-  ledOff(LOW);
-  delayms(GLITTER_DELAY_OFF);
+void set_leds_all(uint8_t value)
+{  
+  set_led_1206(value);
+  set_led_0805(value);
+  set_led_0603(value);
+  set_led_0402(value);
+  set_led_0201(value);
+  set_led_01005(value);
 }
 
 //--------------------------------------------------------------
@@ -63,6 +70,8 @@ void main()
   set_led_powergood(HIGH);  // show power is there
   delayms(200);
 
+  // "glitter effect"
+  // sequentially and overlapping switching through the LEDs
   for(int i = 0; i < 10; i++)
   {
     glitter_led(set_led_1206, set_led_01005);
@@ -72,6 +81,9 @@ void main()
     glitter_led(set_led_0201, set_led_0402);
     glitter_led(set_led_01005, set_led_0201);
   }
+
+  // make sure all leds are off
+  set_leds_all(LOW);
   
   // switch off again
   set_led_powergood(LOW); 
@@ -113,6 +125,8 @@ void main()
       break;
     }
 
+    // make sure all leds are off before going to sleep
+    set_leds_all(LOW);
 
     // go to sleep / active halt until the AWU pokes us awake
     __halt();
@@ -121,11 +135,14 @@ void main()
 
 void init_gpio(void)
 {
-  // reset the GPIO just to be source
-  PA_DDR = 0;
-  PB_DDR = 0;
-  PC_DDR = 0;
-  PD_DDR = 0;
+  //
+  // to avoid floating pins toggling from static
+  // we first set them all to be inputs with internal pull up
+  // configuration of the outputs is done laiter
+  PA_DDR = 0; PA_CR1 = 255;
+  PB_DDR = 0; PB_CR1 = 255;
+  PC_DDR = 0; PC_CR1 = 255;
+  PD_DDR = 0; PD_CR1 = 255;
 
   // PA3 power good LED
   PA_ODR_bit.ODR3 = 1;  // drive high == led OFF
@@ -173,9 +190,9 @@ void init_low_power(void)
 
 void init_AWU(void)
 {
-  // this sets the timeout to ~14s +-12% (precision of the LSI _/\Ö/\_)
-  AWU_APR_bit.APR = 22;
-  AWU_TB_bit.AWUTB = 15;
+  // this sets the timeout (given the +-12% precision of the LSI _/\Ö/\_)
+  AWU_APR_bit.APR = POWER_SAVE_AWU_APR;
+  AWU_TB_bit.AWUTB = POWER_SAVE_AWU_AWUTB;
 
   // enable the wake-up unit
   AWU_CSR1_bit.AWUEN = 1; 
@@ -207,7 +224,7 @@ void init_sysclock(void)
 
   // setup / distribute the clock to selected peripherals
   CLK_PCKENR1 = 0;
-  CLK_PCKENR1_bit.PCKEN17 = 0; // TIM1 (used as PWM driver)
+  CLK_PCKENR1_bit.PCKEN17 = 0; // TIM1
   CLK_PCKENR1_bit.PCKEN16 = 0; // TIM3
   CLK_PCKENR1_bit.PCKEN15 = 0; // TIM2
   CLK_PCKENR1_bit.PCKEN14 = 1; // TIM4 (used for systick)
@@ -226,15 +243,38 @@ void init_sysclock(void)
   CLK_PCKENR2_bit.PCKEN20 = 0; // Reserved
 }
 
+//
+// flashes the led for FLASH_DURATION ms
+void flash_led(setledmethod_t ledMethod)
+{
+  ledMethod(HIGH);
+  delayms(FLASH_DURATION);
+  ledMethod(LOW);
+}
+
+//
+// uses ledOnMethod and ledOffMethod to implement a "glitter effect"
+// when called in sequence
+void glitter_led(setledmethod_t ledOnMethod, setledmethod_t ledOffMethod)
+{
+  ledOnMethod(HIGH);
+  delayms(GLITTER_DELAY_ON);
+  ledOffMethod(LOW);
+  delayms(GLITTER_DELAY_OFF);
+}
+
 //--------------------------------------------------------------
 // IRQ prototypes
 //  /!\ SDCC required they are defined in the same file as main()
 // /_!_\ Actual implementation can be spread over the application then.
+void TIM4_UIF_IRQHandler() __interrupt(ISRV_TIM4);
 
 //
-// the auto-wakeup happens only when the device is actually in
-// __halt() (actually active halt state which is chosen automatically)
-// by the hardware when the auto-wakeup unit is enabled
+// the auto-wakeup counter runs only when the device is in (active) halt
+// mode and the auto-wakeup unit is clocked and enabled
+// the counter is automatically reset when the device (re)enters halt mode
+// clearing the interrupt flag is mandatory however so we don't hang in the
+// ISR
 void AWU_IRQHandler() __interrupt(ISRV_AWU)
 {    
     volatile uint8_t reg;

@@ -1,5 +1,5 @@
 Q.O.K. / I.CAN.SOLDER SMD Challenge Firmware
-=====================================================
+============================================
 
 This repository contains the firmware for the HHTronik Quarantine Occupation Kit SMD soldering challenge
 
