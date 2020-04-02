@@ -18,9 +18,9 @@ To connect the debug probe (you will need an STLink V2 or another SWIM-Compatibl
 1. Ground (square pad)
 2. SWIM
 3. NRST
-4. VCC Ref (!! not meant as supply for the board, do not connect on STLink clones when using a USB supply at the same time !!)
+4. VCC Ref (**!! not meant as supply for the board, do not connect on STLink clones when power is already being supplied to the circuit !!**)
 
-The PlatformIO enviromnent enables you to do real debugging on the Craftalight. If you just want to flash a new firmware to the Craftalight, you can you can use other tools (like `ST STM8 Visual Programmer` or `stm8flash`) to do so.
+The PlatformIO enviromnent enables you to do real debugging on the target. If you just want to flash a new firmware you can you can use other tools (like `ST STM8 Visual Programmer` or `stm8flash`) to do so.
 
 Licence
 -------
