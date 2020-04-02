@@ -61,6 +61,7 @@ Components
 | Q1        | `Alpha&Omega Semi AO7401`   | `ON Semiconductor NTS2101P` / SC-70 P-Channel MOSFET (as reverse polarity protection)
 | L1        | `TDK VLS252012HBU-220M`     | `Murata LQH2HPZ220MJRL` / 22uH 2.5x2.0mm inductor
 | U1        | `QX2304L36T`                | Low power PFM Step up converter / SOT23-3
+| U2        | `STM8S003F3U6`              | STM8 8bit microcontroller (8Kb flash, 1Kb RAM, 16MHz) / UFQFPN20
 | C1        | `Samsung CL21A106KPFNNNF`   | 10uF 0805 X5R 10V MLC capacitor
 | C2        | `Samsung CL21A106KPFNNNF`   | 10uF 0805 X5R 10V MLC capacitor
 | C3        | `Samsung CL05B105KQ5NQNC`   | 1uF 0402 X7R 6.3V MLC capacitor
@@ -82,6 +83,11 @@ Components
 | S1        | `C&K PTS645SL50SMTR92`      | Many surface mount tactile switches with a 6x6mm outline
 | BAT1      | `Keystone Electronics 3034` | `Linx Technologies BAT-HLD-001` or `MPD BK-912-TR` or `Q&J WJ-CR2032-1-W`
 
+Firmware
+--------
+
+The firmware to flash on the microcontroller can be found in the `/firmware` folder. 
+Refer to [/firmware/README](./firmware/) for instruction regarding the setup of the development environment (Platform.IO) and programming.
 
 I don't know anything about electronics, what can I learn?
 ----------------------------------------------------------
@@ -92,7 +98,11 @@ Errrr.... you should probably start with some of our other soldering kits:
 - [HHTronik / I learn soldering SMD](https://github.com/hhtronik/qok-i-learn-soldering-smd)
 - [HHTronik / I learn soldering TH](https://github.com/hhtronik/qok-i-learn-soldering-th)
 
+
+
 LICENCE
 -------
 
-This project is licenced under CERN Open Hardware Licence Version 2 - Strongly Reciprocal see LICENCE file for the full text.
+This hardware part of this project is licenced under CERN Open Hardware Licence Version 2 - Strongly Reciprocal see LICENCE file for the full text.
+
+The firmware is released und GPL-v3 see LICENCE file in `/firmware` for the full text.
