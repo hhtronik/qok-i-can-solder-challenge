@@ -13,10 +13,11 @@
 // type definitions and configuration
 typedef void (*setledmethod_t)( uint8_t );
 
+// (in ms)
+#define FLASH_DURATION 2
 
-#define FLASH_DURATION 50
-#define GLITTER_DELAY_ON 30
-#define GLITTER_DELAY_OFF 70
+#define GLITTER_DELAY_ON_FACTOR 7
+#define GLITTER_DELAY_OFF_FACTOR 3
 
 // settings for the auto-wakeup-unit:
 // (APR = 22; AWUTB = 15) ~= 14 seconds interval
@@ -30,7 +31,7 @@ void init_AWU(void);
 void init_low_power(void);
 void init_gpio(void);
 void flash_led(setledmethod_t ledMethod);
-void glitter_led(setledmethod_t ledOnMethod, setledmethod_t ledOffMethod);
+void glitter_led(setledmethod_t ledOnMethod, uint16_t onDelay, setledmethod_t ledOffMethod, uint16_t offDelay);
 
 //--------------------------------------------------------------
 // helper methods to set the LED outputs
@@ -64,31 +65,56 @@ void main()
   init_low_power(); 
   __enable_interrupts();
 
+  uint8_t step = 0;
+
   init_gpio();
 
-  // intro
+  // intro  
   set_led_powergood(HIGH);  // show power is there
-  delayms(200);
 
   // "glitter effect"
   // sequentially and overlapping switching through the LEDs
-  for(int i = 0; i < 10; i++)
+  int16_t onDelay, offDelay;
+  for(step = 0; step < 20; step++)
   {
-    glitter_led(set_led_1206, set_led_01005);
-    glitter_led(set_led_0805, set_led_1206);
-    glitter_led(set_led_0603, set_led_0805);
-    glitter_led(set_led_0402, set_led_0603);
-    glitter_led(set_led_0201, set_led_0402);
-    glitter_led(set_led_01005, set_led_0201);
+    onDelay = GLITTER_DELAY_ON_FACTOR * step * 125;
+    offDelay = GLITTER_DELAY_OFF_FACTOR * step * 125;
+    glitter_led(set_led_1206, onDelay, set_led_01005, offDelay);
+    glitter_led(set_led_0805, onDelay, set_led_1206, offDelay);
+    glitter_led(set_led_0603, onDelay, set_led_0805, offDelay);
+    glitter_led(set_led_0402, onDelay, set_led_0603, offDelay);
+    glitter_led(set_led_0201, onDelay, set_led_0402, offDelay);
+    glitter_led(set_led_01005, onDelay, set_led_0201, offDelay);
+  }
+
+  for(step = 20; step > 1; step--)
+  {
+    onDelay = GLITTER_DELAY_ON_FACTOR * step * 125;
+    offDelay = GLITTER_DELAY_OFF_FACTOR * step * 125;
+    glitter_led(set_led_1206, onDelay, set_led_01005, offDelay);
+    glitter_led(set_led_0805, onDelay, set_led_1206, offDelay);
+    glitter_led(set_led_0603, onDelay, set_led_0805, offDelay);
+    glitter_led(set_led_0402, onDelay, set_led_0603, offDelay);
+    glitter_led(set_led_0201, onDelay, set_led_0402, offDelay);
+    glitter_led(set_led_01005, onDelay, set_led_0201, offDelay);
   }
 
   // make sure all leds are off
   set_leds_all(LOW);
+
+  for(step = 0; step < 8; step++)
+  {
+    // switch off again
+    set_led_powergood(HIGH); 
+    delayms(100);
+    set_led_powergood(LOW);
+    delayms(500);
+  } 
   
   // switch off again
   set_led_powergood(LOW); 
 
-  uint8_t step = 0;
+  step = 0;
 
   // main loop
   while (1)
@@ -255,12 +281,12 @@ void flash_led(setledmethod_t ledMethod)
 //
 // uses ledOnMethod and ledOffMethod to implement a "glitter effect"
 // when called in sequence
-void glitter_led(setledmethod_t ledOnMethod, setledmethod_t ledOffMethod)
+void glitter_led(setledmethod_t ledOnMethod, uint16_t onDelay, setledmethod_t ledOffMethod, uint16_t offDelay)
 {
   ledOnMethod(HIGH);
-  delayms(GLITTER_DELAY_ON);
+  delay(onDelay);
   ledOffMethod(LOW);
-  delayms(GLITTER_DELAY_OFF);
+  delay(offDelay);
 }
 
 //--------------------------------------------------------------
