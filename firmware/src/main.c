@@ -24,6 +24,59 @@ typedef void (*setledmethod_t)( uint8_t );
 #define POWER_SAVE_AWU_APR 22
 #define POWER_SAVE_AWU_AWUTB 15
 
+// morse stuff
+
+#define MORSE_TIME_UNIT ((uint32_t)(250 * 125))
+#define MORSE_DOT MORSE_TIME_UNIT
+#define MORSE_DASH (3 * MORSE_TIME_UNIT)
+#define MORSE_SYMBOL_SPACE MORSE_TIME_UNIT
+#define MORSE_LETTER_SPACE (3 * MORSE_TIME_UNIT - MORSE_SYMBOL_SPACE)
+#define MORSE_WORD_SPACE (7 * MORSE_TIME_UNIT - MORSE_LETTER_SPACE)
+
+// ... --- .-.. -.. . .-. .. -. --. / .-. --- -.-. -.- ... / -....- / .... .... - .-. --- -. .. -.- / ... -- -.. / -.-. .... .- .-.. .-.. . -. --. .
+const uint8_t message[] = {
+  0, 0, 0,  2,
+  1, 1, 1,  2,
+  0, 1, 0, 0,  2,
+  1, 0, 0,  2,
+  0,  2,
+  0, 1, 0,  2,
+  0, 0,  2,
+  1, 0,  2,
+  1, 1, 0,  2,
+  3,
+  0, 1, 0,  2,
+  1, 1, 1,  2,
+  1, 0, 1, 0,  2,
+  1, 0, 1,  2,
+  0, 0, 0,  2,
+  3,
+  1, 0, 0, 0, 0, 1,  2,
+  3,
+  0, 0, 0, 0,  2,
+  0, 0, 0, 0,  2,
+  1,  2,
+  0, 1, 0,  2,
+  1, 1, 1,  2,
+  1, 0,  2,
+  0, 0,  2,
+  1, 0, 1,  2,
+  3,
+  0, 0, 0,  2,
+  1, 1,  2,
+  1, 0, 0,  2,
+  3,
+  1, 0, 1, 0,  2,
+  0, 0, 0, 0,  2,
+  0, 1,  2,
+  0, 1, 0, 0,  2,
+  0, 1, 0, 0,  2,
+  0,  2,
+  1, 0,  2,
+  1, 1, 0,  2,
+  0,  2
+};
+
 //--------------------------------------------------------------
 // fn/method prototypes
 void init_sysclock(void);
@@ -54,6 +107,44 @@ void set_leds_all(uint8_t value)
   set_led_01005(value);
 }
 
+void animation_break_flash_all()
+{
+  for(uint8_t step = 0; step < 6; step++)
+  {
+    set_leds_all(HIGH);
+    delay(20000);
+    set_leds_all(LOW);
+    delay(60000);
+  }
+}
+
+// maybe use a random seed later?
+volatile uint16_t _rnd_cnt16 = 91;
+
+// simple 16bit PRNG
+static uint16_t prng_lfsr16(void)
+{
+
+  return (_rnd_cnt16 = (_rnd_cnt16 >> 1) ^ (-(_rnd_cnt16 & 1) & 0xB400));
+}
+
+static void random_set_led(setledmethod_t ledSetMethod)
+{
+  uint8_t value = (uint8_t)prng_lfsr16();
+
+  ledSetMethod(value & 1);
+}
+
+static void  random_set_all_led()
+{
+  random_set_led(set_led_1206);
+  random_set_led(set_led_0805);
+  random_set_led(set_led_0603);
+  random_set_led(set_led_0402);
+  random_set_led(set_led_0201);
+  random_set_led(set_led_01005);
+}
+
 //--------------------------------------------------------------
 // main method
 void main()
@@ -71,6 +162,135 @@ void main()
 
   // intro  
   set_led_powergood(HIGH);  // show power is there
+
+  // switch on all leds slowly
+  set_led_01005(HIGH);
+  delay(60000);
+  set_led_0201(HIGH);
+  delay(60000);
+  set_led_0402(HIGH);
+  delay(60000);
+  set_led_0603(HIGH);
+  delay(60000);
+  set_led_0805(HIGH);
+  delay(60000);
+  set_led_1206(HIGH);
+  delay(60000);
+
+  animation_break_flash_all();
+
+  // binary counter
+  for(step = 0; step <= 64; step++)
+  {
+    set_led_01005((step & 32) >> 5);
+    set_led_0201((step & 16) >> 4);
+    set_led_0402((step & 8) >> 3);
+    set_led_0603((step & 4) >> 2);
+    set_led_0805((step & 2) >> 1);
+    set_led_1206((step & 1) >> 0);
+    delay(20000);
+  }
+
+  animation_break_flash_all();
+
+  uint8_t stepEven = 0;
+
+  for(uint8_t mod = 1; mod <= 6; mod++)
+  {
+    for(step = 0; step < 10; step++)
+    {
+      stepEven = (step % 2);
+      set_led_01005((6 % mod) == stepEven);
+      set_led_0201((5 % mod) == stepEven);
+      set_led_0402((4 % mod) == stepEven);
+      set_led_0603((3 % mod) == stepEven);
+      set_led_0805((2 % mod) == stepEven);
+      set_led_1206((1 % mod) == stepEven);
+      delay(60000);      
+    }
+  }
+
+  animation_break_flash_all();
+
+  /*or(step = 0; step < 6; step++)
+  {
+    set_led_01005(HIGH);
+    set_led_0201(LOW);
+    set_led_0402(HIGH);
+    set_led_0603(LOW);
+    set_led_0805(HIGH);
+    set_led_1206(LOW);
+    delay(60000);
+    set_led_01005(LOW);
+    set_led_0201(HIGH);
+    set_led_0402(LOW);
+    set_led_0603(HIGH);
+    set_led_0805(LOW);
+    set_led_1206(HIGH);
+    delay(60000);
+  }
+
+  for(step = 0; step < 6; step++)
+  {
+    set_leds_all(HIGH);
+    delay(20000);
+    set_leds_all(LOW);
+    delay(60000);
+  }*/
+
+
+
+  // send morse codes
+  for(step = 0; step < sizeof(message) / sizeof(uint8_t); step++)
+  {
+    
+    switch (message[step])
+    {
+    // DOT
+    case 0:
+      set_led_0805(HIGH);
+      delay(MORSE_DOT);
+      set_led_0805(LOW);
+      delay(MORSE_SYMBOL_SPACE);
+      break;
+
+    // DASH
+    case 1:
+      set_led_0805(HIGH);
+      delay(MORSE_DASH);
+      set_led_0805(LOW);
+      delay(MORSE_SYMBOL_SPACE);
+      break;
+    
+    // character break
+    case 2:
+      delay(MORSE_LETTER_SPACE);
+      break;
+    
+    // word break
+    case 3:
+
+      delay(MORSE_WORD_SPACE);
+      break;
+    
+    // skip over other erroneous entries...
+    default:
+      break;
+    }
+  }  
+
+  set_leds_all(LOW);
+
+  animation_break_flash_all();
+
+  // random pixels
+  for(step = 0; step < 255; step++)
+  {
+    random_set_all_led();
+    delay(10000);
+  }
+
+  animation_break_flash_all();
 
   // "glitter effect"
   // sequentially and overlapping switching through the LEDs
