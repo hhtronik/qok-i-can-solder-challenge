@@ -53,6 +53,34 @@ Optionally you may have these things around:
 - some lint-free cloth / paper towel
 - probably magnifying glasses or a binocular microscope
 
+How should I solder that Oo?!?
+------------------------------
+
+>
+> we're expecting you have some SMD soldering experience already.
+> If you don't you should really go watch all of the videos below and more, and maybe
+> give one of our simpler SMD kits a try first.
+>
+> If you feel you need a refresh on soldering SMD parts, have a look at the 
+> ![I learn soldering SMD instructions](https://github.com/hhtronik/qok-i-learn-soldering-smd/blob/master/soldering-instructions.md)
+>
+
+![Closeup details of the PCB](./assets/pcb-details.jpg)
+
+If you chose the Standard edition, all of the above comes presoldered, which will make your life somewhat easier :) If you didn't, then - well - good luck! Especially the STM8 microcontroller is tricky to solder even though we extended the pads a bit in orders to make it at least doable for you! Our reccommendation would be to start with a single pin to tack the controller down and to do drag soldering with a chisel tip on your soldering iron. Oh! And lots of flux :)
+
+Other than that things are pretty easy:
+
+- the SC-70 package in the top left corner is Q1
+- next to it is a R1 / 1k 0402
+- top right is LED_RP / a red 0805 led
+- left beneath Q1 comes L1 (a bit tricky to solder do that one first maybe? :D)
+- U1 is easy peasy with its chunky SOT23-3
+- the LED in the bottom right corner is LED_PG (green 0805) with it's current limiting resistor (1k 0402) just above
+- the (big) 0805 MLCCs are 10uF each
+- the two 0402 caps in the bottom center are both 1uF (C3 and C5)
+- the single 0402 cap in the top left of the microcontroller is C4 / 100nF
+
 Components
 ----------
 
@@ -65,6 +93,7 @@ Components
 | C1        | `Samsung CL21A106KPFNNNF`   | 10uF 0805 X5R 10V MLC capacitor
 | C2        | `Samsung CL21A106KPFNNNF`   | 10uF 0805 X5R 10V MLC capacitor
 | C3        | `Samsung CL05B105KQ5NQNC`   | 1uF 0402 X7R 6.3V MLC capacitor
+| C5        | `Samsung CL05B105KQ5NQNC`   | 1uF 0402 X7R 6.3V MLC capacitor
 | C4        | `Samsung CL05B104KO5NNNC`   | 100nF 0402 X7R 16V MLC capacitor
 | R1206     | `Yaego SR1206FR-7T100RL`    | 100 Ohm 1% 1206 resistor
 | R0805     | `Yaego SR0805FR-7T100RL`    | 100 Ohm 1% 0805 resistor
