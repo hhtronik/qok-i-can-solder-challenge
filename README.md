@@ -107,10 +107,10 @@ Components
 | LED0402   | `QTB QBLP595-IB`            | Blue LED 0402 / InGaN
 | LED0201_1 | `LUMEX SML-LX0201USBC`      | Blue LED 0201 / InGaN
 | LED0201_2 | `LUMEX SML-LX0201USBC`      | Blue LED 0201 / InGaN
+| R1        | `Yaego SR0402FR-7T1KL`      | 1k Ohm 1% 0402 resistor
+| R2        | `Yaego SR0402FR-7T1KL`      | 1k Ohm 1% 0402 resistor
 | LED_PG    | `QTB QBLP631-R`             | Red LED 0805 / reversed battery indicator
 | LED_RP    | `QTB QBLP631-IG`            | Green LED 0805 / "power good" indicator
-| S1        | `C&K PTS645SL50SMTR92`      | Many surface mount tactile switches with a 6x6mm outline
-| BAT1      | `Keystone Electronics 3034` | `Linx Technologies BAT-HLD-001` or `MPD BK-912-TR` or `Q&J WJ-CR2032-1-W`
 
 Firmware
 --------
